@@ -1,0 +1,25 @@
+# CMake and compiler output
+/build*/
+/cmake-build-*/
+CMakeUserPresets.json
+*.o
+*.obj
+*.a
+*.exe
+
+# Downloaded IMDb sources and generated data; keep the synthetic fixture
+/data/*
+!/data/sample_movies.tsv
+*.tsv.gz
+/generated*/
+/benchmark*/
+*.benchmark.csv
+*.benchmark.tsv
+
+# Local platform/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
