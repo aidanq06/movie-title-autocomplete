@@ -5,11 +5,11 @@
 #include "trie.hpp"
 #include "tst.hpp"
 
-#include <algorithm>
 #include <chrono>
 #include <iomanip>
 #include <istream>
 #include <ostream>
+#include <utility>
 #include <vector>
 
 namespace {
