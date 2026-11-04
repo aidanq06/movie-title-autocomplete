@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_library(movie_core src/normalize.cpp src/imdb_loader.cpp src/trie.cpp)
+add_library(movie_core src/normalize.cpp src/imdb_loader.cpp src/trie.cpp src/tst.cpp)
 target_include_directories(movie_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 if(MSVC)
     target_compile_options(movie_core PRIVATE /W4)
@@ -23,6 +23,11 @@ if(BUILD_TESTING)
     target_compile_definitions(test_core PRIVATE
         TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data")
     add_test(NAME core COMMAND test_core)
+
+    add_executable(test_tst tests/test_tst.cpp)
+    target_link_libraries(test_tst PRIVATE movie_core)
+    add_test(NAME tst COMMAND test_tst)
+
     add_test(NAME cli COMMAND ${CMAKE_COMMAND}
         "-DAPP=$<TARGET_FILE:movie_autocomplete>"
         "-DDATA=${CMAKE_CURRENT_SOURCE_DIR}/data/sample_movies.tsv"
