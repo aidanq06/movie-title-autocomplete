@@ -3,6 +3,10 @@
 // reported by CTest as "Skipped") unless the file is available. It looks at the
 // MOVIE_DATASET environment variable first, then at data/title.basics.tsv.
 
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS // Reading one variable with std::getenv is fine here.
+#endif
+
 #include "benchmark.hpp"
 #include "imdb_loader.hpp"
 #include "test_support.hpp"
