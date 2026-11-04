@@ -2,12 +2,15 @@
 #include "normalize.hpp"
 #include "prefix_index.hpp"
 #include "imdb_loader.hpp"
+#include "trie.hpp"
 
 #include <algorithm>
 #include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <numeric>
+#include <random>
 #include <stdexcept>
 
 namespace {
@@ -124,6 +127,113 @@ void testLoader() {
     check(loadImdbMovies(header_only.path.string()).records_loaded == 0, "header-only file");
     expectLoadError((header_only.directory / "missing.tsv").string());
 }
+
+Movie makeMovie(const std::string& id, const std::string& title, int year = -1) {
+    return {id, title, "movie", year, normalizeTitle(title)};
+}
+
+// Independent scan + canonical sort oracle; reusable when the TST is added.
+std::vector<MovieId> expectedMatches(const std::vector<Movie>& movies,
+                                    const std::string& raw_prefix, std::size_t limit) {
+    const auto prefix = normalizeTitle(raw_prefix);
+    std::vector<MovieId> ids;
+    if (prefix.empty()) return ids;
+    for (MovieId id = 0; id < movies.size(); ++id) {
+        if (movies[id].normalized_title.compare(0, prefix.size(), prefix) == 0) {
+            ids.push_back(id);
+        }
+    }
+    std::stable_sort(ids.begin(), ids.end(), MovieIdLess{movies});
+    if (ids.size() > limit) ids.resize(limit);
+    return ids;
+}
+
+void checkSearch(const PrefixIndex& index, const std::vector<Movie>& movies,
+                 const std::string& prefix, std::size_t limit = 10) {
+    check(index.search(prefix, limit).movie_ids == expectedMatches(movies, prefix, limit),
+          index.name() + " differs from scan oracle for: " + prefix.substr(0, 80));
+}
+
+void testTrie() {
+    Trie trie;
+    check(trie.search("x").movie_ids.empty(), "search before build");
+    const auto loaded = loadImdbMovies(std::string(TEST_DATA_DIR) + "/sample_movies.tsv");
+    trie.build(loaded.movies);
+    const PrefixIndex& index = trie;
+    check(index.name() == "Trie", "polymorphic index name");
+    check(trie.stats().node_count > 1 && trie.stats().estimated_bytes > 0, "nonempty stats");
+    for (const std::string prefix : {"star", "STAR!", "Star Light", "alien", "alien 3",
+            "spider-man", "THE", "toy", "missing", "", "!!!", "star light beyond"}) {
+        for (std::size_t limit : {std::size_t{0}, std::size_t{1}, std::size_t{10}, std::size_t{100}}) {
+            checkSearch(index, loaded.movies, prefix, limit);
+        }
+    }
+    check(trie.search("star").movie_ids.size() == 10, "default result limit is ten");
+    check(trie.search("STAR LIGHT", 100).movie_ids == std::vector<MovieId>({5, 3, 4, 7, 6}),
+          "duplicate title canonical ordering");
+    check(trie.search("").nodes_visited == 0 && trie.search("star", 0).nodes_visited == 0,
+          "empty prefix and zero limit do no node work");
+
+    const std::vector<Movie> small = {makeMovie("a", "A"), makeMovie("ab", "AB"),
+                                    makeMovie("ac", "AC"), makeMovie("empty", "!!!")};
+    trie.build(small);
+    check(trie.stats().node_count == 4, "one root plus three character nodes");
+    check(trie.search("a", 1).nodes_visited == 2, "stop immediately on terminal limit");
+    check(trie.search("a", 10).nodes_visited == 4, "prefix endpoint counted once");
+    check(trie.search("ax").nodes_visited == 2, "missing edge counts only reached nodes");
+    check(trie.search("z").nodes_visited == 1, "root-only miss");
+    checkSearch(trie, small, "a");
+    check(trie.search("star").movie_ids.empty(), "rebuild clears old keys");
+
+    const std::string long_title = "Long " + std::string(100000, 'X');
+    const std::vector<Movie> long_movies = {makeMovie("long", long_title)};
+    trie.build(long_movies);
+    checkSearch(trie, long_movies, "long"); // Traverse the deep subtree without recursion.
+    checkSearch(trie, long_movies, long_title);
+    checkSearch(trie, long_movies, long_title + "x");
+    const std::vector<Movie> empty;
+    trie.build(empty);
+    check(trie.stats().node_count == 1 && trie.search("a").movie_ids.empty(), "empty rebuild");
+}
+
+void testTrieAgainstOracle() {
+    std::mt19937 rng(3530);
+    std::vector<Movie> movies;
+    for (std::size_t i = 0; i < 2000; ++i) {
+        std::string title;
+        const auto length = 1 + rng() % 25;
+        const std::string alphabet = "abCD09 -!";
+        for (std::size_t j = 0; j < length; ++j) title.push_back(alphabet[rng() % alphabet.size()]);
+        movies.push_back(makeMovie("tt" + std::to_string(i), title, static_cast<int>(rng() % 100) + 1900));
+    }
+    // Include exact comparator ties; their IDs must stay in source order.
+    movies.push_back(makeMovie("same", "Repeat", 2000));
+    movies.push_back(makeMovie("same", "Repeat", 2000));
+    Trie trie;
+    trie.build(movies);
+    checkSearch(trie, movies, "repeat");
+    for (std::size_t i = 0; i < 300; ++i) {
+        const auto& key = movies[rng() % movies.size()].normalized_title;
+        checkSearch(trie, movies, key.substr(0, rng() % (key.size() + 2)), rng() % 35);
+    }
+}
+
+void testTrieStress() {
+    std::vector<Movie> movies;
+    movies.reserve(150000);
+    for (std::size_t i = 0; i < 150000; ++i) {
+        const auto suffix = std::to_string(1000000 + i).substr(1); // Six digits.
+        movies.push_back(makeMovie("tt" + suffix, "Synthetic Movie " + suffix, 1900 + i % 126));
+    }
+    Trie trie;
+    trie.build(movies);
+    check(trie.stats().node_count > 150000 && trie.stats().estimated_bytes > 0, "150000-record build");
+    checkSearch(trie, movies, "synthetic");
+    checkSearch(trie, movies, "synthetic movie 149999");
+    checkSearch(trie, movies, "synthetic movie 150000");
+    checkSearch(trie, movies, "synthetic", 150001); // Verify every inserted ID, in order.
+    std::cout << "Built and verified 150000 synthetic movie records\n";
+}
 } // namespace
 
 int main() {
@@ -131,6 +241,9 @@ int main() {
         testNormalization();
         testOrdering();
         testLoader();
+        testTrie();
+        testTrieAgainstOracle();
+        testTrieStress();
         std::cout << "Passed " << checks << " checks\n";
         return 0;
     } catch (const std::exception& error) {
