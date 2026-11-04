@@ -42,6 +42,9 @@ if(BUILD_TESTING)
     add_project_test(tst tests/test_tst.cpp)
     add_project_test(indexes tests/test_indexes.cpp)
     add_project_test(benchmark tests/test_benchmark.cpp)
+    # Exits 77 unless the real IMDb file is available; CTest then reports it as Skipped.
+    add_project_test(full_dataset tests/test_full_dataset.cpp)
+    set_tests_properties(full_dataset PROPERTIES SKIP_RETURN_CODE 77)
 
     add_test(NAME cli COMMAND ${CMAKE_COMMAND}
         "-DAPP=$<TARGET_FILE:movie_autocomplete>"
