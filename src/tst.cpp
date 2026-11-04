@@ -1,4 +1,5 @@
 #include "tst.hpp"
+#include "normalize.hpp"
 
 #include <algorithm>
 
@@ -61,8 +62,94 @@ void TernarySearchTree::build(const std::vector<Movie>& movies) {
     }
 }
 
-SearchResult TernarySearchTree::search(const std::string&, std::size_t) const {
-    return {}; // Prefix search is the next milestone.
+SearchResult TernarySearchTree::search(const std::string& raw_prefix, std::size_t limit) const {
+    SearchResult result;
+    if (limit == 0) {
+        return result;
+    }
+    const auto prefix = normalizeTitle(raw_prefix);
+    if (prefix.empty()) {
+        return result;
+    }
+
+    // Find the node that matches the last prefix character. nodes_visited counts
+    // every node examined, including left/right nodes passed on the way down.
+    std::size_t node = root_;
+    std::size_t position = 0;
+    while (node != kNullNode) {
+        ++result.nodes_visited;
+        const Node& current = nodes_[node];
+        const char ch = prefix[position];
+        if (ch < current.character) {
+            node = current.left;
+        } else if (ch > current.character) {
+            node = current.right;
+        } else if (position + 1 == prefix.size()) {
+            break;
+        } else {
+            node = current.middle;
+            ++position;
+        }
+    }
+    if (node == kNullNode) {
+        return result;
+    }
+
+    const auto append_terminal = [&](const Node& terminal) {
+        for (MovieId id : terminal.terminal_ids) {
+            result.movie_ids.push_back(id);
+            if (result.movie_ids.size() == limit) {
+                break;
+            }
+        }
+    };
+    // The endpoint's left/right links hold other characters at the same position,
+    // which do not share this prefix. Only its own IDs and middle subtree match.
+    append_terminal(nodes_[node]);
+    if (result.movie_ids.size() == limit) {
+        return result;
+    }
+
+    // In-order walk: left subtree, this node's IDs, middle subtree, right subtree.
+    // An explicit stack keeps very long titles from overflowing the call stack.
+    enum class Step : unsigned char { Left, Center, Right };
+    struct Frame {
+        std::size_t node;
+        Step next;
+    };
+    std::vector<Frame> stack;
+    const auto enter = [&](std::size_t child) {
+        if (child != kNullNode) {
+            ++result.nodes_visited;
+            stack.push_back({child, Step::Left});
+        }
+    };
+    enter(nodes_[node].middle);
+    while (!stack.empty()) {
+        // enter() may reallocate the stack, so update the frame before calling it.
+        Frame& frame = stack.back();
+        const Node& current = nodes_[frame.node];
+        switch (frame.next) {
+        case Step::Left:
+            frame.next = Step::Center;
+            enter(current.left);
+            break;
+        case Step::Center:
+            append_terminal(current);
+            if (result.movie_ids.size() == limit) {
+                return result;
+            }
+            frame.next = Step::Right;
+            enter(current.middle);
+            break;
+        case Step::Right:
+            // Nothing remains here after the right subtree, so drop this frame first.
+            stack.pop_back();
+            enter(current.right);
+            break;
+        }
+    }
+    return result;
 }
 
 IndexStats TernarySearchTree::stats() const {
