@@ -85,6 +85,7 @@ struct QueryRecord {
 
 // First place where two result lists disagree, with enough context to debug it.
 struct ResultMismatch {
+    std::string compared; // For example "Trie vs Ternary Search Tree".
     std::string prefix;
     std::size_t limit = 0;
     std::size_t first_count = 0;
