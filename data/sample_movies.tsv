@@ -1,0 +1,30 @@
+tconst	titleType	primaryTitle	originalTitle	isAdult	startYear	endYear	runtimeMinutes	genres
+tt0000001	movie	THE DARK KNIGHT	THE DARK KNIGHT	0	2008	\N	152	Action
+tt0000002	movie	Spider-Man: Homecoming	Spider-Man: Homecoming	0	2017	\N	133	Action
+tt0000003	movie	 Toy Story! 	Toy Story	0	1995	\N	81	Animation
+tt0000004	movie	Star Light	Star Light	0	\N	\N	90	Drama
+tt0000005	movie	Star Light	Star Light	0	2001	\N	90	Drama
+tt0000006	movie	STAR LIGHT	STAR LIGHT	0	1999	\N	90	Drama
+tt0000007	movie	Star-Light	Star-Light	0	bad	\N	90	Drama
+tt0000008	movie	Star Light	Star Light	0	2001	\N	90	Drama
+tt0000009	short	Star Short	Star Short	0	2000	\N	10	Short
+tt0000010	tvSeries	Star Series	Star Series	0	2000	\N	45	Drama
+tt0000011	movie	Star Adult	Star Adult	1	2000	\N	90	Drama
+tt0000012	movie	\N	Missing	0	2000	\N	90	Drama
+tt0000013	movie		Empty	0	2000	\N	90	Drama
+tt0000014	movie	!!!	Punctuation	0	2000	\N	90	Drama
+tt0000015	movie	Star 00	Star 00	0	1980	\N	90	Drama
+tt0000016	movie	Star 01	Star 01	0	1981	\N	90	Drama
+tt0000017	movie	Star 02	Star 02	0	1982	\N	90	Drama
+tt0000018	movie	Star 03	Star 03	0	1983	\N	90	Drama
+tt0000019	movie	Star 04	Star 04	0	1984	\N	90	Drama
+tt0000020	movie	Star 05	Star 05	0	1985	\N	90	Drama
+tt0000021	movie	Star 06	Star 06	0	1986	\N	90	Drama
+tt0000022	movie	Star 07	Star 07	0	1987	\N	90	Drama
+tt0000023	movie	Star 08	Star 08	0	1988	\N	90	Drama
+tt0000024	movie	Star 09	Star 09	0	1989	\N	90	Drama
+tt0000025	movie	Star 10	Star 10	0	1990	\N	90	Drama
+tt0000026	movie	Star 11	Star 11	0	1991	\N	90	Drama
+tt0000027	movie	Alien	Alien	0	1979	\N	117	Horror
+tt0000028	movie	Alien 3	Alien 3	0	1992	\N	114	Horror
+malformed	movie
