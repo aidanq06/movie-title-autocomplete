@@ -13,7 +13,12 @@ function(enable_project_warnings target)
     endif()
 endfunction()
 
-add_library(movie_core src/normalize.cpp src/imdb_loader.cpp src/trie.cpp src/tst.cpp)
+add_library(movie_core
+    src/normalize.cpp
+    src/imdb_loader.cpp
+    src/trie.cpp
+    src/tst.cpp
+    src/benchmark.cpp)
 target_include_directories(movie_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 enable_project_warnings(movie_core)
 
@@ -35,6 +40,7 @@ if(BUILD_TESTING)
     add_project_test(core tests/test_core.cpp)
     add_project_test(tst tests/test_tst.cpp)
     add_project_test(indexes tests/test_indexes.cpp)
+    add_project_test(benchmark tests/test_benchmark.cpp)
 
     add_test(NAME cli COMMAND ${CMAKE_COMMAND}
         "-DAPP=$<TARGET_FILE:movie_autocomplete>"
