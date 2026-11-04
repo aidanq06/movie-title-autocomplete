@@ -11,8 +11,11 @@ CMakeUserPresets.json
 /data/*
 !/data/sample_movies.tsv
 *.tsv.gz
-/generated*/
-/benchmark*/
+/generated-data/
+/benchmark-results/
+/benchmark_results/
+/tmp/
+*.tmp
 *.benchmark.csv
 *.benchmark.tsv
 
