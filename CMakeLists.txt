@@ -18,7 +18,8 @@ add_library(movie_core
     src/imdb_loader.cpp
     src/trie.cpp
     src/tst.cpp
-    src/benchmark.cpp)
+    src/benchmark.cpp
+    src/app.cpp)
 target_include_directories(movie_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 enable_project_warnings(movie_core)
 
@@ -45,5 +46,8 @@ if(BUILD_TESTING)
     add_test(NAME cli COMMAND ${CMAKE_COMMAND}
         "-DAPP=$<TARGET_FILE:movie_autocomplete>"
         "-DDATA=${CMAKE_CURRENT_SOURCE_DIR}/data/sample_movies.tsv"
+        "-DWORK_DIR=${CMAKE_CURRENT_BINARY_DIR}/cli-test-output"
+        "-DMENU_SCRIPT=${CMAKE_CURRENT_SOURCE_DIR}/tests/menu_script.txt"
+        "-DMENU_TRUNCATED=${CMAKE_CURRENT_SOURCE_DIR}/tests/menu_truncated.txt"
         -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_cli.cmake)
 endif()

@@ -1,20 +1,30 @@
+#include "app.hpp"
 #include "imdb_loader.hpp"
-#include "trie.hpp"
 
 #include <charconv>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 #include <string_view>
 
 namespace {
 void usage(std::ostream& out) {
-    out << "Movie Title Autocomplete - Phase 1 (Trie)\n"
-        << "Usage: movie_autocomplete --data PATH [--max-movies N] [--search PREFIX]\n"
-        << "  --help          Display this help\n"
-        << "  --data PATH     Decompressed IMDb-format TSV file\n"
-        << "  --max-movies N  Select up to N eligible movies (default: 150000; 0 allowed)\n"
-        << "  --search PREFIX  Return up to ten matches and exit\n"
-        << "Example: ./build/movie_autocomplete --data data/sample_movies.tsv --search \"star\"\n";
+    out << "Movie Title Autocomplete - Trie vs Ternary Search Tree\n"
+        << "Usage: movie_autocomplete --data PATH [--max-movies N]\n"
+        << "                          [--search PREFIX [--algorithm trie|tst|both] | --benchmark [--csv FILE]]\n"
+        << "  --help              Display this help\n"
+        << "  --data PATH         Decompressed IMDb-format TSV file\n"
+        << "  --max-movies N      Select up to N eligible movies (default: 150000; 0 allowed)\n"
+        << "  --search PREFIX     Return up to ten matches and exit\n"
+        << "  --algorithm NAME    Structure used by --search: trie (default), tst, or both\n"
+        << "  --benchmark         Run the full performance benchmark and exit\n"
+        << "  --csv FILE          With --benchmark, also write per-query measurements to FILE\n"
+        << "With --data and neither --search nor --benchmark, an interactive menu starts.\n"
+        << "Exit codes: 0 success, 1 file or I/O failure, 2 invalid arguments, 3 results differ.\n"
+        << "Examples:\n"
+        << "  ./build/movie_autocomplete --data data/sample_movies.tsv\n"
+        << "  ./build/movie_autocomplete --data data/sample_movies.tsv --search \"star\" --algorithm both\n"
+        << "  ./build/movie_autocomplete --data data/title.basics.tsv --max-movies 150000 --benchmark\n";
 }
 
 std::size_t parseCount(std::string_view value) {
@@ -28,79 +38,101 @@ std::size_t parseCount(std::string_view value) {
     }
     return count;
 }
+
+struct Options {
+    std::string path;
+    std::string prefix;
+    std::string csv_path;
+    std::size_t max_movies = 150000;
+    AlgorithmChoice algorithm = AlgorithmChoice::Trie; // Phase 1's --search behavior.
+    bool has_search = false;
+    bool has_algorithm = false;
+    bool has_benchmark = false;
+    bool show_help = false;
+};
+
+Options parseOptions(int argc, char* argv[]) {
+    Options options;
+    for (int i = 1; i < argc; ++i) {
+        const std::string option = argv[i];
+        if (option == "--help") {
+            options.show_help = true;
+            return options;
+        }
+        if (option == "--benchmark") {
+            options.has_benchmark = true;
+            continue;
+        }
+        if (option != "--data" && option != "--max-movies" && option != "--search"
+            && option != "--algorithm" && option != "--csv") {
+            throw std::invalid_argument("Unknown option: " + option);
+        }
+        if (i + 1 == argc) {
+            throw std::invalid_argument("Missing value for " + option);
+        }
+        const std::string value = argv[++i];
+        if (option == "--data") {
+            options.path = value;
+        } else if (option == "--max-movies") {
+            options.max_movies = parseCount(value);
+        } else if (option == "--search") {
+            options.prefix = value;
+            options.has_search = true;
+        } else if (option == "--csv") {
+            options.csv_path = value;
+        } else {
+            const auto algorithm = parseAlgorithmChoice(value);
+            if (!algorithm) {
+                throw std::invalid_argument("--algorithm must be trie, tst, or both, not: " + value);
+            }
+            options.algorithm = *algorithm;
+            options.has_algorithm = true;
+        }
+    }
+    if (options.path.empty()) {
+        throw std::invalid_argument("--data PATH is required");
+    }
+    if (options.has_search && options.has_benchmark) {
+        throw std::invalid_argument("--search and --benchmark cannot be used together");
+    }
+    if (options.has_algorithm && !options.has_search) {
+        throw std::invalid_argument("--algorithm only applies to --search");
+    }
+    if (!options.csv_path.empty() && !options.has_benchmark) {
+        throw std::invalid_argument("--csv only applies to --benchmark");
+    }
+    return options;
+}
 } // namespace
 
 int main(int argc, char* argv[]) {
     try {
         if (argc == 1) {
             usage(std::cout);
-            return 0;
+            return kExitSuccess;
         }
-        std::string path;
-        std::string prefix;
-        std::size_t max_movies = 150000;
-        bool has_search = false;
-        for (int i = 1; i < argc; ++i) {
-            const std::string option = argv[i];
-            if (option == "--help") {
-                usage(std::cout);
-                return 0;
-            }
-            if (option != "--data" && option != "--max-movies" && option != "--search") {
-                throw std::invalid_argument("Unknown option: " + option);
-            }
-            if (i + 1 == argc) {
-                throw std::invalid_argument("Missing value for " + option);
-            }
-            const std::string value = argv[++i];
-            if (option == "--data") {
-                path = value;
-            } else if (option == "--max-movies") {
-                max_movies = parseCount(value);
-            } else {
-                prefix = value;
-                has_search = true;
-            }
-        }
-        if (path.empty()) {
-            throw std::invalid_argument("--data PATH is required");
+        const Options options = parseOptions(argc, argv);
+        if (options.show_help) {
+            usage(std::cout);
+            return kExitSuccess;
         }
 
-        const auto loaded = loadImdbMovies(path, max_movies);
-        Trie trie;
-        trie.build(loaded.movies);
-        const auto stats = trie.stats();
-        std::cout << "Loaded records: " << loaded.records_loaded << '\n'
-                  << "Source rows scanned: " << loaded.rows_scanned << '\n'
-                  << "Malformed rows skipped: " << loaded.malformed_rows << '\n'
-                  << "Requested maximum: " << max_movies << '\n';
-        if (loaded.records_loaded < max_movies) {
-            std::cout << "Reached end of file before requested maximum.\n";
+        // The one load of the dataset. Every index below shares this vector.
+        const auto loaded = loadImdbMovies(options.path, options.max_movies);
+        printLoadSummary(loaded, options.max_movies, std::cout);
+        if (options.has_search) {
+            return runSearchCommand(loaded, options.prefix, options.algorithm, std::cout);
         }
-        std::cout << "Trie nodes: " << stats.node_count << '\n'
-                  << "Estimated index storage (bytes): " << stats.estimated_bytes << '\n';
-        if (!has_search) {
-            std::cout << "Supply --search PREFIX to run a Trie prefix search.\n";
-            return 0;
+        if (options.has_benchmark) {
+            return runBenchmarkCommand(loaded, options.csv_path, std::cout, std::cerr);
         }
-
-        const auto result = trie.search(prefix);
-        std::cout << "Search prefix: \"" << prefix << "\"\n"
-                  << "Matches: " << result.movie_ids.size() << '\n';
-        for (MovieId id : result.movie_ids) {
-            const auto& movie = loaded.movies[id];
-            std::cout << "  " << movie.primary_title << " ("
-                      << (movie.year == -1 ? "Unknown year" : std::to_string(movie.year))
-                      << ") [" << movie.tconst << "]\n";
-        }
-        std::cout << "Nodes visited: " << result.nodes_visited << '\n';
-        return 0;
+        return runInteractiveMenu(loaded, options.path, std::cin, std::cout);
     } catch (const std::invalid_argument& error) {
         std::cerr << "Error: " << error.what() << "\n\n";
         usage(std::cerr);
-        return 2;
+        return kExitBadArguments;
     } catch (const std::exception& error) {
         std::cerr << "Error: " << error.what() << '\n';
-        return 1;
+        return kExitFailure;
     }
 }
