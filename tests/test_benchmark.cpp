@@ -1,3 +1,4 @@
+#include "app.hpp"
 #include "benchmark.hpp"
 #include "imdb_loader.hpp"
 #include "test_support.hpp"
@@ -202,7 +203,13 @@ void testBenchmarkDetectsMismatches() {
         check(printed.str().find("prefix \"" + report.mismatch_details.front().prefix + "\"") != std::string::npos,
               "report names the failing prefix");
         check(printed.str().find("PASSED") == std::string::npos, "report does not claim success");
+        std::ostringstream command_output;
+        check(reportBenchmarkOutcome(report, movies, "", command_output) == kExitResultsDiffer,
+              "command-line mode exits nonzero on a mismatch");
     }
+    std::ostringstream honest_output;
+    check(reportBenchmarkOutcome(runBenchmark(movies, fastConfig()), movies, "", honest_output) == kExitSuccess,
+          "command-line mode exits zero when results agree");
 
     // Both agree with each other but not with the data: only the scan can catch this.
     const IndexFactory bad_a = [] { return std::make_unique<FaultyIndex>(FaultyIndex::Fault::ReverseOrder); };

@@ -1,0 +1,18 @@
+1
+star light
+2
+STAR-LIGHT
+3
+alien
+3
+no such movie
+3
+!!!
+
+9
+not a number
+5
+4
+6
+1
+this line must never be read because option 6 exited
