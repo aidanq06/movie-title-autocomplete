@@ -13,6 +13,9 @@ else()
     target_compile_options(movie_core PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
+add_executable(movie_autocomplete src/main.cpp)
+target_link_libraries(movie_autocomplete PRIVATE movie_core)
+
 include(CTest)
 if(BUILD_TESTING)
     add_executable(test_core tests/test_core.cpp)
@@ -20,4 +23,8 @@ if(BUILD_TESTING)
     target_compile_definitions(test_core PRIVATE
         TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data")
     add_test(NAME core COMMAND test_core)
+    add_test(NAME cli COMMAND ${CMAKE_COMMAND}
+        "-DAPP=$<TARGET_FILE:movie_autocomplete>"
+        "-DDATA=${CMAKE_CURRENT_SOURCE_DIR}/data/sample_movies.tsv"
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_cli.cmake)
 endif()
