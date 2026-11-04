@@ -5,28 +5,36 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+function(enable_project_warnings target)
+    if(MSVC)
+        target_compile_options(${target} PRIVATE /W4)
+    else()
+        target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic)
+    endif()
+endfunction()
+
 add_library(movie_core src/normalize.cpp src/imdb_loader.cpp src/trie.cpp src/tst.cpp)
 target_include_directories(movie_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-if(MSVC)
-    target_compile_options(movie_core PRIVATE /W4)
-else()
-    target_compile_options(movie_core PRIVATE -Wall -Wextra -Wpedantic)
-endif()
+enable_project_warnings(movie_core)
 
 add_executable(movie_autocomplete src/main.cpp)
 target_link_libraries(movie_autocomplete PRIVATE movie_core)
+enable_project_warnings(movie_autocomplete)
 
 include(CTest)
 if(BUILD_TESTING)
-    add_executable(test_core tests/test_core.cpp)
-    target_link_libraries(test_core PRIVATE movie_core)
-    target_compile_definitions(test_core PRIVATE
-        TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data")
-    add_test(NAME core COMMAND test_core)
+    function(add_project_test test_name source)
+        add_executable(test_${test_name} ${source})
+        target_link_libraries(test_${test_name} PRIVATE movie_core)
+        target_compile_definitions(test_${test_name} PRIVATE
+            TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data")
+        enable_project_warnings(test_${test_name})
+        add_test(NAME ${test_name} COMMAND test_${test_name})
+    endfunction()
 
-    add_executable(test_tst tests/test_tst.cpp)
-    target_link_libraries(test_tst PRIVATE movie_core)
-    add_test(NAME tst COMMAND test_tst)
+    add_project_test(core tests/test_core.cpp)
+    add_project_test(tst tests/test_tst.cpp)
+    add_project_test(indexes tests/test_indexes.cpp)
 
     add_test(NAME cli COMMAND ${CMAKE_COMMAND}
         "-DAPP=$<TARGET_FILE:movie_autocomplete>"
