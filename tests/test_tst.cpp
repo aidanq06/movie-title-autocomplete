@@ -121,6 +121,8 @@ void testDuplicateTitlesAreKept() {
     tst.build(movies);
     check(idsFor(tst, "star light") == std::vector<MovieId>({3, 2, 1, 0, 4}), "canonical duplicates");
     check(tst.stats().node_count == 10, "duplicates share one key path");
+    check(idsFor(tst, "star light", 2) == std::vector<MovieId>({3, 2}), "limit cuts inside one terminal");
+    check(idsFor(tst, "star", 3) == std::vector<MovieId>({3, 2, 1}), "limit cuts inside a descendant terminal");
     // Exact comparator ties stay in input order.
     const std::vector<Movie> ties = {makeMovie("same", "Repeat", 2000), makeMovie("same", "Repeat", 2000)};
     tst.build(ties);
