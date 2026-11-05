@@ -26,3 +26,6 @@ Thumbs.db
 .vscode/
 *.swp
 *~
+
+# Generated benchmark output
+/results/
