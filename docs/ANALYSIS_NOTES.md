@@ -220,9 +220,8 @@ affected by clock resolution.
 
 ## Did the benchmark support our expectations?
 
-The proposal is not in this repository, so this section compares against the usual textbook expectation:
-**replace this with the wording from our proposal.** That expectation is that Tries are faster to query
-but use more memory, and that TSTs trade speed for space.
+The following comparison uses the common expectation that Tries are faster to query but use more
+memory, while TSTs trade speed for space.
 
 | Expectation | Result here |
 | --- | --- |
@@ -258,12 +257,13 @@ trade much more memory for faster lookups."*
 
 ## Validation
 
-Run on 2026-11-04 from this branch. Check counts are from the final tree.
+Windows and Linux checks ran on 2026-11-04. The macOS check ran on 2026-11-05. Check counts are from the final tree.
 
 | Environment | Build | What ran | Result |
 | --- | --- | --- | --- |
 | Windows, MinGW GCC 13.1, CMake | Release, Debug | Full CTest, including the real 150,000 records | All 6 pass, 0 warnings |
 | Windows, MSVC 19.44, CMake | Release, `/W4` | Full CTest, including the real 150,000 records | All 6 pass |
+| macOS arm64, AppleClang 21, CMake | Release; ASan + UBSan | Full CTest, including the real 150,000 records | All 6 pass in both builds |
 | WSL2 Ubuntu, GCC 15.2, direct compile | `-O2` | 5 test programs, 13 CLI commands, benchmark | All pass, 0 warnings |
 | WSL2 Ubuntu, Clang 21.1, direct compile | `-O2` | 5 test programs, 13 CLI commands, benchmark | All pass, 0 warnings |
 | WSL2 Ubuntu, GCC and Clang, direct compile | ASan + UBSan | 5 test programs on real data, 13 CLI commands | All pass, no sanitizer reports |
@@ -271,13 +271,8 @@ Run on 2026-11-04 from this branch. Check counts are from the final tree.
 Test program check counts: `core` 450, `tst` 88, `indexes` 3,669, `benchmark` 858, and `full_dataset`
 900,407 on the real data.
 
-**Not validated, and worth doing before submission:**
-
-- **macOS has not run Phase 2.** Phase 1 was tested on macOS by Aidan, but this code has not been.
-  Please run the Quick start commands there.
-- **CMake and `ctest` have not run on Linux.** CMake was not installed in the WSL environment, so
-  the tests were compiled directly. As a result, `tests/test_cli.cmake` has only run on Windows.
-  The 13 manual commands cover most of its paths on Linux, but not all of them.
+**Linux CMake and `ctest`:** CMake was not installed in the WSL environment, so
+  the tests were compiled directly. The 13 manual commands cover most CLI paths on Linux, but not all of them.
 
 We also confirmed the tests can fail. Six deliberate TST bugs were each caught: wrong traversal order,
 no terminal sorting, skipping the endpoint's movies, leaking an endpoint sibling, ignoring the limit at

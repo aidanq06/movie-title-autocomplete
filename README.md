@@ -2,6 +2,8 @@
 
 COP3530 Project 2, Group 123
 
+[Video demonstration](https://youtu.be/XtHltlB4EbI)
+
 - Aidan Quach ([aidanq06](https://github.com/aidanq06))
 - Hana Elbatouty ([hana4324](https://github.com/hana4324))
 - Krish Gupta ([KrishGupta25](https://github.com/KrishGupta25))
