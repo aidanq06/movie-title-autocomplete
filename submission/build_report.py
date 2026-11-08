@@ -122,7 +122,7 @@ def footer(canvas, doc):
     canvas.saveState()
     canvas.setFont(NORMAL, 12)
     canvas.setFillColor(colors.black)
-    canvas.drawString(72, 39, "DRAFT - team inputs and video URL pending")
+    canvas.drawString(72, 39, "DRAFT - team inputs pending")
     canvas.drawRightString(540, 39, str(doc.page))
     canvas.restoreState()
 

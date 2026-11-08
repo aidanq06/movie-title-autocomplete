@@ -15,8 +15,8 @@ Make the report PDF easy to find in the repository and link it from the README w
 | Component | Rubric weight | Current status |
 | --- | --- | --- |
 | Code and functionality | 2 points | Implemented and merged; verified on 150,000 IMDb movies |
-| Report PDF | 2 points | Draft being prepared; team inputs and video URL still needed |
-| Video walkthrough | 2 points | Deferred at Aidan's request; record/upload later |
+| Report PDF | 2 points | Draft prepared; team reflections and proposal comparison still needed |
+| Video walkthrough | 2 points | Uploaded: https://youtu.be/XtHltlB4EbI; confirm access and duration |
 | Individual peer feedback | Separate 1% of grade | Every member completes it, including self-evaluation |
 | Group feedback | Separate 1% of grade | Complete together and submit once for the group |
 
@@ -29,9 +29,9 @@ Maximum **five pages total**, including headings, links, and references. Use **1
 | Required content | Planned location | State |
 | --- | --- | --- |
 | Team name | Page 1 | Group 123 used as the default |
-| Team members and GitHub usernames | Page 1 | Aidan/Krish verified; Hana has no coding role and username is not supplied |
+| Team members and GitHub usernames | Page 1 | Aidan, Hana, and Krish listed |
 | Repository URL | Page 1 | Available |
-| YouTube demo URL | Page 1 | Pending recording and upload |
+| YouTube demo URL | Page 1 | Added; verify unlisted access |
 | Problem | Page 1 | Drafted from implemented project |
 | Motivation | Page 1 | Drafted from implemented project |
 | Features implemented | Page 1 | Verified against current main |
@@ -53,7 +53,7 @@ The rubric summarizes 15 prompts, while the detailed list has more individually 
 ## Evidence already verified
 
 - Phase 1 PR #5 and Phase 2 PR #11 are merged into main.
-- Reviewed main commit: c40a9c0eb4273ffe69e9c8eda23833d31c1e061e.
+- Reviewed main commit: 13148effa75fe70786ebb504f7c203f021d63ff6.
 - On 2026-11-05, all six CTest targets passed in Release on macOS arm64 / AppleClang 21.
 - All six passed under AddressSanitizer and UndefinedBehaviorSanitizer, including the official 150,000-record dataset test.
 - Full benchmark: 130 unique prefixes, 7,150 cross-structure comparisons, zero cross-structure or sorted-scan mismatches.
@@ -64,16 +64,16 @@ The rubric summarizes 15 prompts, while the detailed list has more individually 
 
 1. Original proposal, or a summary of its promised features and expectations, to confirm what changed.
 2. Each member's real experience, challenges, learning, and preferred workflow changes.
-3. Any noncoding contributions to include in the roles section. Do not invent responsibilities or coding credit. Aidan has requested that Hana not be added to the coding repository.
-4. Final YouTube URL once the video is uploaded. Keep it accessible as Public or Unlisted and test it signed out.
+3. Confirm any additional contributions to include in the roles section. Do not invent responsibilities or coding credit.
+4. Confirm the uploaded YouTube video is accessible signed out and is under five minutes.
 
-## Video for later
+## Video check
 
-Keep the final recording below five minutes; aim for approximately 4 minutes 30 seconds. The assignment allows one presenter or a group recording. Show the live application and its actual outputs rather than only slides.
+The recording is uploaded. Confirm it is accessible to anyone with the link, runs no longer than five minutes, and covers the application's essential features.
 
 Cover startup with 150,000 movies, Trie search, TST search, case/punctuation handling, duplicate titles and unknown years, a no-match/empty query, side-by-side agreement, statistics, the full benchmark, and the CSV command. Show a small fixture briefly if it is easier to demonstrate unknown years. Do not claim recent titles are present in the first-150,000 selection.
 
-After uploading to YouTube, put the real URL in the report and README. A repository URL or a local terminal executable does not replace the required video URL. No hosted website is required for this terminal project.
+The video URL is in the report draft and is proposed for the main README. A repository URL or a local terminal executable does not replace the required video URL.
 
 ## Final checks before Canvas
 
@@ -88,4 +88,4 @@ After uploading to YouTube, put the real URL in the report and README. A reposit
 - [ ] Each teammate completes the separate peer feedback, including themselves.
 - [ ] Submit the separate group feedback once for the group.
 
-The current preparation does not submit anything to Canvas, record/upload a video, or complete feedback on anyone's behalf.
+The current preparation does not submit anything to Canvas or complete feedback on anyone's behalf.

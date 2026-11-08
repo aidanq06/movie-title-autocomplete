@@ -3,11 +3,11 @@ Comparing a Trie and a Ternary Search Tree
 
 Group 123 | COP3530 Project 2b | Report draft
 
-**Team:** Aidan Quach (aidanq06); Krish Gupta (KrishGupta25); Hana Elbatouty (no coding role; GitHub username not supplied).
+**Team:** Aidan Quach (aidanq06); Hana Elbatouty (hana4324); Krish Gupta (KrishGupta25).
 
 **Repository:** https://github.com/aidanq06/movie-title-autocomplete
 
-**Video:** Recording deferred. The YouTube URL must be added before submission.
+**Video:** https://youtu.be/XtHltlB4EbI
 
 ## Problem and motivation
 
@@ -45,9 +45,9 @@ Additional algorithms and containers include binary search of Trie child vectors
 
 **Aidan Quach:** Phase 1 architecture, CMake, shared types/interface, normalization, streaming loader, manual Trie, initial CLI, fixtures/tests, setup documentation, and handoff. Phase 1 was merged through PR #5.
 
-**Krish Gupta:** manual TST, result-equivalence tests, deterministic workload, benchmark engine, final terminal menu/commands, integration and real-data tests, and measured analysis documentation. Phase 2 was merged through PR #11.
+**Hana Elbatouty:** TST node structure, insertion, prefix search, and TST tests, including branching, ordering, and result limits.
 
-**Hana Elbatouty:** no coding responsibility. Any noncoding contribution remains unconfirmed for this draft and must be described accurately before submission.
+**Krish Gupta:** result-equivalence tests, deterministic workload, benchmark engine, final terminal menu/commands, integration and real-data tests, and measured analysis documentation. Phase 2 was merged through PR #11.
 
 <!-- PAGE BREAK -->
 
@@ -112,11 +112,11 @@ Limitations include ASCII-only matching, an older-film selection, no popularity 
 
 **Changes if starting again:** Team response pending. Possible discussion topics are agreeing on interfaces and canonical ordering earlier, setting up shared correctness tests before benchmarking, pinning the dataset snapshot, reserving time for the report/video, and comparing memory-layout alternatives. State the team's own decisions rather than treating these suggestions as past experience.
 
-**Individual learning:** Each member's response is pending. Aidan should describe a specific lesson from his actual work; Krish should do the same for his work. Hana should describe what she learned through her actual involvement, without claiming coding work. One specific, truthful takeaway per member is better than a generic claim that everyone learned the same thing.
+**Individual learning:** Each member's response is pending. Aidan, Hana, and Krish should each describe a specific lesson from their work. One specific, truthful takeaway per member is better than a generic claim that everyone learned the same thing.
 
 ## References
 
-[1] Group 123. Movie Title Autocomplete source code, README, and merged implementation history. Reviewed main commit c40a9c0. https://github.com/aidanq06/movie-title-autocomplete
+[1] Group 123. Movie Title Autocomplete source code, README, and merged implementation history. Reviewed main commit 13148ef. https://github.com/aidanq06/movie-title-autocomplete
 
 [2] IMDb. Non-Commercial Datasets documentation and title.basics.tsv.gz. https://developer.imdb.com/non-commercial-datasets/ ; https://datasets.imdbws.com/title.basics.tsv.gz . Documentation accessed November 5, 2026. Information courtesy of IMDb (https://www.imdb.com). Used with permission; applicable IMDb terms govern the data.
 
