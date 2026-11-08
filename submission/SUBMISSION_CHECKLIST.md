@@ -1,6 +1,6 @@
 # Project 2b submission preparation
 
-Group 123: Aidan Quach, Hana Elbatouty, Krish Gupta.
+Movie Search, Group 123: Aidan Quach, Hana Elbatouty, Krish Gupta.
 
 Deadline from the supplied Canvas assignment: **Friday, November 6, 2026, 11:59 p.m.** Check the Canvas course timezone. The submission counts for the whole group.
 
@@ -28,7 +28,7 @@ Maximum **five pages total**, including headings, links, and references. Use **1
 
 | Required content | Planned location | State |
 | --- | --- | --- |
-| Team name | Page 1 | Group 123 used as the default |
+| Team name | Page 1 | Movie Search, Group 123 |
 | Team members and GitHub usernames | Page 1 | Aidan, Hana, and Krish listed |
 | Repository URL | Page 1 | Available |
 | YouTube demo URL | Page 1 | Added; verify unlisted access |
@@ -40,7 +40,7 @@ Maximum **five pages total**, including headings, links, and references. Use **1
 | Algorithms implemented | Page 2 | Manual Trie and TST |
 | Additional structures/algorithms | Page 2 | Vectors, binary search, sorting, iterative DFS, benchmark query set and oracle |
 | Responsibility and roles | Page 2 | Coding roles verified; noncoding contributions require confirmation |
-| Changes since proposal and rationale | Page 3 | Original proposal is needed to confirm differences |
+| Changes since proposal and rationale | Page 3 | Compared with the original proposal |
 | Worst-case complexity of major features | Page 3 | Include normalization, streaming load, construction, search, and auxiliary algorithms |
 | Group experience | Page 5 | Team-authored reflection needed |
 | Challenges | Page 5 | Technical challenges can be described; personal experience requires confirmation |
@@ -62,10 +62,9 @@ The rubric summarizes 15 prompts, while the detailed list has more individually 
 
 ## Team inputs still needed
 
-1. Original proposal, or a summary of its promised features and expectations, to confirm what changed.
-2. Each member's real experience, challenges, learning, and preferred workflow changes.
-3. Confirm any additional contributions to include in the roles section. Do not invent responsibilities or coding credit.
-4. Confirm the uploaded YouTube video is accessible signed out and is under five minutes.
+1. Each member's real experience, challenges, learning, and preferred workflow changes.
+2. Confirm any additional contributions to include in the roles section. Do not invent responsibilities or coding credit.
+3. Confirm the uploaded YouTube video is accessible signed out and is under five minutes.
 
 ## Video check
 

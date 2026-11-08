@@ -1,7 +1,7 @@
 # Movie Title Autocomplete
 Comparing a Trie and a Ternary Search Tree
 
-Group 123 | COP3530 Project 2b | Report draft
+Movie Search | Group 123 | COP3530 Project 2b | Report draft
 
 **Team:** Aidan Quach (aidanq06); Hana Elbatouty (hana4324); Krish Gupta (KrishGupta25).
 
@@ -71,9 +71,9 @@ Each index occupies O(V + n) owned storage, including terminal IDs; V is bounded
 
 ## Proposal comparison and design rationale
 
-**Team confirmation required:** the original proposal was not supplied with this preparation. Before submission, compare the final implementation against it and state the actual changes and their rationale. The analysis notes also explicitly identify this proposal comparison as unfinished [3]. Do not claim an unverified change or an original hypothesis that the team did not make.
+The original proposal called for autocomplete as a user types, two manually implemented structures, 150,000 IMDb movies, and comparisons across at least 100 prefixes [6]. The completed program keeps the proposed structures, dataset size, ordering requirement, and measurements. It accepts a prefix after the user presses Enter rather than updating suggestions on each keystroke; the terminal menu provides a simple interface for running and comparing searches.
 
-Verified final design choices include sparse sorted Trie children to control memory, node indices to survive vector relocation, shared normalization and ordering to ensure equal answers, iterative traversal for long titles, and a deterministic benchmark with an independent oracle. These choices are supported by the code. The team must identify which, if any, changed the proposal, whether any planned feature was removed, and why the final scope was appropriate.
+The implementation also specifies details the proposal left open: a sparse Trie to limit child-link storage, consistent ASCII normalization and duplicate ordering, an independent sorted scan to check results, and CSV export for benchmark data. The proposal assigned data preparation to Krish; Aidan implemented the loader in Phase 1, while Krish added real-dataset validation. These choices kept the two structures on the same records and made their results easier to compare.
 
 <!-- PAGE BREAK -->
 
@@ -125,3 +125,5 @@ Limitations include ASCII-only matching, an older-film selection, no popularity 
 [4] COP3530. Project 2b Group Submission rubric, Fall 2026. Assignment text supplied by the team; report and video limits follow that text.
 
 [5] Microsoft Learn. C++ Standard Library algorithm functions, stable_sort complexity. https://learn.microsoft.com/en-us/cpp/standard-library/algorithm-functions#stable_sort . Accessed November 5, 2026.
+
+[6] Movie Search, Group 123. Movie Title Autocomplete - Project 2 Proposal. October 2026.

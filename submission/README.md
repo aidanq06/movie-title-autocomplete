@@ -7,7 +7,7 @@ This folder prepares the report and submission requirements for COP3530 Project 
 - `SUBMISSION_CHECKLIST.md`: detailed rubric coverage, pending team inputs, and Canvas/feedback steps.
 - Generated report: `../output/pdf/movie_autocomplete_report_draft.pdf`.
 
-The report is a **draft**, not ready to submit. The video URL is included. The proposal comparison and personal reflections still need the team's input. Keep every role and experience truthful.
+The report is a **draft**, not ready to submit. The video URL and proposal comparison are included. The personal reflections still need the team's input. Keep every role and experience truthful.
 
 ## Rebuild the PDF
 
